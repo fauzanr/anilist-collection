@@ -1,15 +1,18 @@
-@import url("https://fonts.googleapis.com/css2?family=Poppins&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap");
 
 :root {
   --txtBlack: #04111d;
-  --txtPrimary: #04111dae;
+  --txtPrimary: #04111d9a;
+}
+
+* {
+  font-family: Poppins, sans-serif;
 }
 
 html,
 body {
   padding: 0;
   margin: 0;
-  font-family: Poppins, sans-serif;
 }
 
 h1,
@@ -19,13 +22,14 @@ h4,
 h5,
 h6 {
   color: var(--txtBlack);
+  margin: 0;
 }
 
 p,
 span,
-label,
-a {
+label {
   color: var(--txtPrimary);
+  margin: 0;
 }
 
 a {

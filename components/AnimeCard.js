@@ -23,24 +23,23 @@ const Body = styled.div`
   flex: 1;
   display: flex;
   flex-direction: column;
+  gap: 0.5rem;
   padding: 1rem;
 `;
-const Desc = styled.p`
+const Truncate = styled.div`
   margin: 0;
-  max-height: 3em;
   overflow: hidden;
   text-overflow: ellipsis;
-`;
-const Title = styled.h3`
-  flex: 1;
-  margin: 1rem 0;
+  white-space: normal;
   max-height: 3em;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
 `;
 const Footer = styled.div`
   display: flex;
   align-items: center;
+  margin-top: auto;
   gap: 0.5rem;
 `;
 
@@ -52,8 +51,6 @@ const AnimeCard = ({
   coverImage,
   averageScore,
 }) => {
-  const handleClick = () => {};
-
   return (
     <Link href={`/anime/${id}`}>
       <Card>
@@ -62,13 +59,15 @@ const AnimeCard = ({
             src={coverImage.extraLarge}
             layout="responsive"
             objectFit="cover"
-            width={100}
-            height={100}
+            width={200}
+            height={200}
           />
         </Cover>
         <Body>
-          <Desc>{description || "-"}</Desc>
-          <Title title={title.english}>{title.english || "-"}</Title>
+          <Truncate as="h3" title={title.english}>
+            {title.english || "-"}
+          </Truncate>
+          <Truncate as="p">{description || "-"}</Truncate>
           <Footer>
             <StarIcon height="1em" />
             <span>{averageScore}</span>

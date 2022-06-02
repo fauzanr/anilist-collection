@@ -38,7 +38,7 @@ const NavbarLink = styled.a`
   font-weight: bold;
   border-bottom: 4px solid
     ${({ active, theme }) => (active ? theme.blue1 : "transparent")};
-  color: ${({ active, theme }) => active && theme.txtBlack};
+  color: ${({ active, theme }) => (active ? theme.txtBlack : theme.txtPrimary)};
   &:hover {
     color: ${({ theme }) => theme.txtBlack};
   }
