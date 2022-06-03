@@ -1,7 +1,21 @@
-import React from "react";
+import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import styled from "@emotion/styled";
+import {
+  addToCollection,
+  createCollectionWithAnime,
+  useCollection,
+} from "../../context/CollcectionProvider";
+import {
+  Button,
+  Input,
+  Modal,
+  Select,
+  useModal,
+  useToasts,
+} from "@geist-ui/core";
+import { Controller, useForm } from "react-hook-form";
 
 const Banner = styled.div`
   height: 180px;
@@ -80,15 +94,6 @@ const Metric = styled.div`
   }
 `;
 
-const Button = styled.button`
-  color: ${({ theme }) => theme.blue1};
-  cursor: pointer;
-  border: none;
-  background: none;
-  font-size: 16px;
-  font-weight: bold;
-`;
-
 const Text = styled.p`
   margin-bottom: ${({ mb }) => mb};
 `;
@@ -101,13 +106,8 @@ const Tag = styled.label`
   background: ${({ theme }) => theme.blue1};
 `;
 
-const Aside = styled.div`
-  /* @media (min-width: ${({ theme }) => theme.breakpoints.md}) {
-    width: 280px;
-    margin-left: 1rem;
-    flex: none;
-  } */
-`;
+const Aside = styled.div``;
+
 const CollectionList = styled.div`
   margin-bottom: 2rem;
 `;
@@ -127,11 +127,47 @@ const AnimeDetail = ({ anime, characters = [] }) => {
     averageScore,
     popularity,
   } = anime;
+
+  const { visible, setVisible, bindings } = useModal();
+  const [collections, dispatch] = useCollection();
+  const { register, getValues, setValue, control } = useForm();
+  const [isNewCollection, setIsNewCollection] = useState(false);
+  const { setToast } = useToasts();
+
+  const fullTitle = title.english || title.userPreferred;
+  const inCollections = collections.filter(({ animes }) => animes.includes(id));
+
+  // const { field: selectField } = useController({ name: "collectionId" });
+
+  const onCloseModal = () => {
+    setVisible(false);
+    setIsNewCollection(false);
+  };
+
+  const onSubmitModal = () => {
+    if (isNewCollection === true) {
+      const name = getValues("collectionName");
+      if (name.trim() == "") return;
+      dispatch(createCollectionWithAnime({ name, anime }));
+      setToast({ text: "Added Successfully" });
+      setValue("collectionName", "");
+      onCloseModal(false);
+    } else {
+      const id = getValues("collectionId");
+      if (id == null) return;
+      dispatch(addToCollection({ id, anime }));
+      setToast({ text: "Added Successfully" });
+      setValue("collectionId", null);
+      onCloseModal(false);
+    }
+  };
+
   return (
     <>
       <Banner>
-        <Image src={bannerImage} layout="fill" objectFit="cover" />
+        <Image src={bannerImage} layout="fill" objectFit="cover" priority />
       </Banner>
+
       <Container>
         <Main>
           <CoverPlaceholder>
@@ -142,11 +178,12 @@ const AnimeDetail = ({ anime, characters = [] }) => {
                 objectFit="cover"
                 width={200}
                 height={200}
-                priority
               />
             </CoverContainer>
           </CoverPlaceholder>
-          <Title>{title.english || title.userPreferred}</Title>
+
+          <Title>{fullTitle}</Title>
+
           <Metrics>
             <Metric>
               <Text as="h2">{episodes}</Text>
@@ -161,7 +198,11 @@ const AnimeDetail = ({ anime, characters = [] }) => {
               <Text>Popularity</Text>
             </Metric>
           </Metrics>
-          <Button>+ Add to My Collection</Button>
+
+          <Button type="success" onClick={() => setVisible(true)}>
+            + Add to My Collection
+          </Button>
+
           <Text mb="1rem">{description}</Text>
           <Tags>
             {genres.map((genre) => (
@@ -169,10 +210,16 @@ const AnimeDetail = ({ anime, characters = [] }) => {
             ))}
           </Tags>
         </Main>
+
         <Aside>
           <CollectionList>
             <Title as="h2">In Collection</Title>
-            <Link href="#">Collection 1</Link>
+            {inCollections.length === 0 && <Text>Not in any collection.</Text>}
+            {inCollections.map((coll) => (
+              <div key={coll.id}>
+                <Link href={`/collection/${coll.id}`}>{coll.name}</Link>
+              </div>
+            ))}
           </CollectionList>
           <CharacterList>
             <Title as="h2">Characters</Title>
@@ -185,6 +232,55 @@ const AnimeDetail = ({ anime, characters = [] }) => {
           </CharacterList>
         </Aside>
       </Container>
+
+      <Modal visible={visible} {...bindings} onClose={onCloseModal}>
+        <Modal.Title>Add to My Collection</Modal.Title>
+
+        <Modal.Content>
+          <Text>Add {fullTitle} to</Text>
+
+          {isNewCollection ? (
+            <>
+              <Input
+                placeholder="Enter new collection name"
+                width="100%"
+                marginBottom="1rem"
+                {...register("collectionName")}
+              />
+            </>
+          ) : (
+            <>
+              <Controller
+                name="collectionId"
+                control={control}
+                render={({ field }) => (
+                  <Select
+                    placeholder="Choose collection"
+                    width="100%"
+                    marginBottom="1rem"
+                    {...field}
+                  >
+                    {collections.map((coll) => (
+                      <Select.Option key={coll.id} value={coll.id}>
+                        {coll.name}
+                      </Select.Option>
+                    ))}
+                  </Select>
+                )}
+              />
+
+              <Button width="100%" onClick={() => setIsNewCollection(true)}>
+                + New Collection
+              </Button>
+            </>
+          )}
+        </Modal.Content>
+
+        <Modal.Action passive onClick={onCloseModal}>
+          Cancel
+        </Modal.Action>
+        <Modal.Action onClick={onSubmitModal}>Add</Modal.Action>
+      </Modal>
     </>
   );
 };

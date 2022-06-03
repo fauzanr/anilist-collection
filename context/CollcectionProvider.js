@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useReducer } from "react";
+import { generateId } from "../utils/utils";
 
 // {
 //   id: '',
@@ -7,11 +8,15 @@ import React, { createContext, useContext, useReducer } from "react";
 //   animes: [],
 // }
 
-const initialState = [];
-
-export const CollectionContext = createContext();
-
-export const useCollection = () => useContext(CollectionContext);
+const initialState = [
+  {
+    id: "9fj9lwr",
+    name: "Cool Collection",
+    bannerUrl:
+      "https://s4.anilist.co/file/anilistcdn/media/anime/banner/140960-Z7xSvkRxHKfj.jpg",
+    animes: [],
+  },
+];
 
 export const createCollection = ({ name }) => ({
   type: "CREATE",
@@ -20,7 +25,7 @@ export const createCollection = ({ name }) => ({
 
 export const createCollectionWithAnime = ({ name, anime }) => ({
   type: "CREATE",
-  payload: { name, animeId: anime.id, bannerUrl: bannerImage },
+  payload: { name, animeId: anime.id, bannerUrl: anime.bannerImage },
 });
 
 export const editCollection = ({ id, name }) => ({
@@ -49,10 +54,10 @@ const collectionReducer = (state = initialState, action) => {
   switch (type) {
     case "CREATE":
       const newCollection = {
-        id: Math.random().toString(36).substring(2, 9),
+        id: generateId(),
         name: payload.name,
-        bannerUrl: payload.bannerUrl,
-        animes: payload.animeId ? [animeId] : [],
+        bannerUrl: payload.bannerUrl || "/defaultBanner.jpeg",
+        animes: payload.animeId ? [payload.animeId] : [],
       };
       return [...state, newCollection];
 
@@ -96,8 +101,12 @@ const collectionReducer = (state = initialState, action) => {
   }
 };
 
+export const CollectionContext = createContext();
+
+export const useCollection = () => useContext(CollectionContext);
+
 const CollectionProvider = ({ children }) => {
-  const [state, dispatch] = useReducer(collectionReducer);
+  const [state, dispatch] = useReducer(collectionReducer, initialState);
 
   return (
     <CollectionContext.Provider value={[state, dispatch]}>
