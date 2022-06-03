@@ -3,18 +3,8 @@ import Image from "next/image";
 import styled from "@emotion/styled";
 import Link from "next/link";
 import { StarIcon } from "@heroicons/react/outline";
+import { Card } from "../components/styled";
 
-const Card = styled.div`
-  display: flex;
-  flex-direction: column;
-  border: 0.5px solid #dbdbdb;
-  border-radius: 8px;
-  overflow: hidden;
-  &:hover {
-    cursor: pointer;
-    box-shadow: 0px 0px 8px 1px #00000040;
-  }
-`;
 const Cover = styled.div`
   flex: none;
   background: lightgray;

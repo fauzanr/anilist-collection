@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useReducer } from "react";
+import React, { createContext, useContext, useEffect, useReducer } from "react";
 import { generateId } from "../utils/utils";
 
 // {
@@ -7,16 +7,9 @@ import { generateId } from "../utils/utils";
 //   bannerUrl: ''
 //   animes: [],
 // }
-const defaultBannerUrl = "/defaultBanner.jpeg";
 
-const initialState = [
-  {
-    id: "9fj9lwr",
-    name: "Cool Collection",
-    bannerUrl: defaultBannerUrl,
-    animes: [],
-  },
-];
+const collectionStorageName = "my-collections";
+const defaultBannerUrl = "/defaultBanner.jpeg";
 
 export const createCollection = ({ name }) => ({
   type: "CREATE",
@@ -48,8 +41,10 @@ export const removeFromCollection = ({ id, animeId }) => ({
   payload: { id, animeId },
 });
 
-const collectionReducer = (state = initialState, action) => {
+const collectionReducer = (state, action) => {
   const { type = "", payload = {} } = action;
+
+  let newState = state;
 
   switch (type) {
     case "CREATE":
@@ -59,18 +54,22 @@ const collectionReducer = (state = initialState, action) => {
         bannerUrl: payload.bannerUrl || defaultBannerUrl,
         animes: payload.animeId ? [payload.animeId] : [],
       };
-      return [...state, newCollection];
+
+      newState = [...state, newCollection];
+      break;
 
     case "EDIT":
       const selectedCollection0 = state.find((coll) => coll.id === payload.id);
       if (selectedCollection0) {
         selectedCollection0.name = payload.name;
       }
-      return state;
+      newState = state;
+      break;
 
     case "DELETE":
       state = state.filter((coll) => coll.id !== payload.id);
-      return state;
+      newState = state;
+      break;
 
     case "ADD_ANIME":
       const collection1 = state.find((coll) => coll.id === payload.id);
@@ -85,7 +84,8 @@ const collectionReducer = (state = initialState, action) => {
           collection1.animes = [...animeSet];
         }
       }
-      return state;
+      newState = state;
+      break;
 
     case "REMOVE_ANIME":
       const collection2 = state.find((coll) => coll.id === payload.id);
@@ -94,19 +94,37 @@ const collectionReducer = (state = initialState, action) => {
           (animeId) => animeId !== payload.animeId
         );
       }
-      return state;
+      newState = state;
+      break;
 
-    default:
-      return state;
+    case "SET_STATE":
+      state = payload;
+      newState = state;
+      break;
   }
+
+  localStorage.setItem(collectionStorageName, JSON.stringify(newState));
+  return newState;
 };
 
 export const CollectionContext = createContext();
 
 export const useCollection = () => useContext(CollectionContext);
 
+const getInitialState = () => {
+  return localStorage.getItem(collectionStorageName)
+    ? JSON.parse(localStorage.getItem(collectionStorageName))
+    : [];
+};
+
 const CollectionProvider = ({ children }) => {
-  const [state, dispatch] = useReducer(collectionReducer, initialState);
+  const [state, dispatch] = useReducer(collectionReducer, []);
+
+  useEffect(() => {
+    dispatch({ type: "SET_STATE", payload: getInitialState() });
+  }, []);
+
+  useEffect(() => {}, [state]);
 
   return (
     <CollectionContext.Provider value={[state, dispatch]}>

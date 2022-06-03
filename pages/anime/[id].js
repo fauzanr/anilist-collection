@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import styled from "@emotion/styled";
+import { Controller, useForm } from "react-hook-form";
+import { Banner, Text } from "../../components/styled";
 import {
   addToCollection,
   createCollectionWithAnime,
@@ -15,12 +17,6 @@ import {
   useModal,
   useToasts,
 } from "@geist-ui/core";
-import { Controller, useForm } from "react-hook-form";
-
-const Banner = styled.div`
-  height: 180px;
-  position: relative;
-`;
 
 const Container = styled.div`
   padding: 1rem;
@@ -94,12 +90,10 @@ const Metric = styled.div`
   }
 `;
 
-const Text = styled.p`
-  margin-bottom: ${({ mb }) => mb};
-`;
 const Tags = styled(FlexRow)`
   flex-wrap: wrap;
 `;
+
 const Tag = styled.label`
   padding: 0 0.5rem;
   border-radius: 12px;
