@@ -149,14 +149,14 @@ const AnimeDetail = ({ anime, characters = [] }) => {
       const name = getValues("collectionName");
       if (name.trim() == "") return;
       dispatch(createCollectionWithAnime({ name, anime }));
-      setToast({ text: "Added Successfully" });
+      setToast({ type: "success", text: "Added Successfully" });
       setValue("collectionName", "");
       onCloseModal(false);
     } else {
       const id = getValues("collectionId");
       if (id == null) return;
       dispatch(addToCollection({ id, anime }));
-      setToast({ text: "Added Successfully" });
+      setToast({ type: "success", text: "Added Successfully" });
       setValue("collectionId", null);
       onCloseModal(false);
     }

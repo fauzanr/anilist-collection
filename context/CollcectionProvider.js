@@ -7,13 +7,13 @@ import { generateId } from "../utils/utils";
 //   bannerUrl: ''
 //   animes: [],
 // }
+const defaultBannerUrl = "/defaultBanner.jpeg";
 
 const initialState = [
   {
     id: "9fj9lwr",
     name: "Cool Collection",
-    bannerUrl:
-      "https://s4.anilist.co/file/anilistcdn/media/anime/banner/140960-Z7xSvkRxHKfj.jpg",
+    bannerUrl: defaultBannerUrl,
     animes: [],
   },
 ];
@@ -56,7 +56,7 @@ const collectionReducer = (state = initialState, action) => {
       const newCollection = {
         id: generateId(),
         name: payload.name,
-        bannerUrl: payload.bannerUrl || "/defaultBanner.jpeg",
+        bannerUrl: payload.bannerUrl || defaultBannerUrl,
         animes: payload.animeId ? [payload.animeId] : [],
       };
       return [...state, newCollection];
@@ -69,7 +69,7 @@ const collectionReducer = (state = initialState, action) => {
       return state;
 
     case "DELETE":
-      state.filter((coll) => coll.id !== payload.id);
+      state = state.filter((coll) => coll.id !== payload.id);
       return state;
 
     case "ADD_ANIME":
@@ -78,7 +78,7 @@ const collectionReducer = (state = initialState, action) => {
       if (collection1) {
         if (collection1.animes.length === 0) {
           collection1.animes = [payload.animeId];
-          collection1.bannerUrl = [payload.bannerUrl];
+          collection1.bannerUrl = payload.bannerUrl;
         } else {
           const animeSet = new Set(collection1.animes);
           animeSet.add(payload.animeId);
