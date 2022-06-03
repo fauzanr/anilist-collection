@@ -14,12 +14,13 @@ const Container = styled.div`
   margin: auto;
 
   @media (min-width: ${({ theme }) => theme.breakpoints.md}) {
-    display: flex;
+    display: grid;
+    grid-template-columns: 1fr 280px;
+    gap: 1rem;
   }
 `;
 
 const Main = styled.div`
-  flex: auto;
   margin-bottom: 2rem;
 `;
 
@@ -101,11 +102,11 @@ const Tag = styled.label`
 `;
 
 const Aside = styled.div`
-  @media (min-width: ${({ theme }) => theme.breakpoints.md}) {
+  /* @media (min-width: ${({ theme }) => theme.breakpoints.md}) {
     width: 280px;
     margin-left: 1rem;
     flex: none;
-  }
+  } */
 `;
 const CollectionList = styled.div`
   margin-bottom: 2rem;
@@ -176,10 +177,10 @@ const AnimeDetail = ({ anime, characters = [] }) => {
           <CharacterList>
             <Title as="h2">Characters</Title>
             {characters.map(({ node = {}, voiceActors = [] }) => (
-              <>
+              <div key={node.id}>
                 <Text as="h4">{node.name?.full}</Text>
                 <Text mb="1rem">{voiceActors[0]?.name?.full}</Text>
-              </>
+              </div>
             ))}
           </CharacterList>
         </Aside>
