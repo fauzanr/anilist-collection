@@ -34,7 +34,7 @@ const CollectionForm = ({ visible = false, collection, onClose }) => {
   return (
     <Modal visible={visible} onClose={onClose}>
       <Modal.Title>
-        {isEdit === true ? `Edit ${collection?.name}` : "Add New Collection"}
+        {isEdit === true ? `Edit Collection` : "Add New Collection"}
       </Modal.Title>
 
       <Modal.Content>

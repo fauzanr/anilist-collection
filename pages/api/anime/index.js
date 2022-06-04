@@ -8,6 +8,6 @@ export default async function handler(req, res) {
     const arrayId = id.split(",");
     const { data } = await getAnimes(1, 10, arrayId);
 
-    res.status(200).json(data.Page);
+    res.status(200).json(data.Page.media);
   }
 }

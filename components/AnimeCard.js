@@ -3,13 +3,14 @@ import Image from "next/image";
 import styled from "@emotion/styled";
 import Link from "next/link";
 import { StarIcon } from "@heroicons/react/outline";
-import { Card } from "../components/styled";
+import { Card, Truncate } from "../components/styled";
 import { defaultBannerUrl } from "../utils/utils";
 
 const Cover = styled.div`
   flex: none;
   background: lightgray;
 `;
+
 const Body = styled.div`
   flex: 1;
   display: flex;
@@ -17,16 +18,7 @@ const Body = styled.div`
   gap: 0.5rem;
   padding: 1rem;
 `;
-const Truncate = styled.div`
-  margin: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: normal;
-  max-height: 3em;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-`;
+
 const Footer = styled.div`
   display: flex;
   align-items: center;

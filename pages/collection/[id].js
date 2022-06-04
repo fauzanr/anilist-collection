@@ -1,38 +1,91 @@
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
+import useSWR from "swr";
+import { Button, Modal, useModal, useToasts } from "@geist-ui/core";
+import { TrashIcon, PencilAltIcon } from "@heroicons/react/solid";
 import AnimeCard from "../../components/AnimeCard";
+import {
+  removeFromCollection,
+  useCollection,
+} from "../../context/CollectionProvider";
+import { defaultBannerUrl } from "../../utils/utils";
 import {
   Banner,
   Grid,
   Heading,
   Text,
   Container,
+  Truncate,
 } from "../../components/styled";
-import { useCollection } from "../../context/CollectionProvider";
-import { defaultBannerUrl } from "../../utils/utils";
+import styled from "@emotion/styled";
+import CollectionForm from "../../components/CollectionForm";
+
+const Wrapper = styled.div`
+  display: flex;
+  position: relative;
+`;
+
+const ActionContainer = styled.div`
+  position: absolute;
+  bottom: 0.5rem;
+  right: 0.5rem;
+`;
+
+const AnimeCardWithAction = ({ onClickRemove, ...rest }) => {
+  return (
+    <Wrapper>
+      <AnimeCard {...rest} />
+      <ActionContainer>
+        <Button
+          auto
+          type="error"
+          icon={<TrashIcon />}
+          scale={2 / 3}
+          onClick={onClickRemove}
+        />
+      </ActionContainer>
+    </Wrapper>
+  );
+};
 
 const CollectionDetail = ({ id }) => {
   const [collections, dispatch] = useCollection();
   const [collection, setCollection] = useState(null);
-  const [animes, setAnimes] = useState(null);
+  const { visible: editVisible, setVisible: setEditVisible } = useModal();
+  const { visible, setVisible, bindings } = useModal();
+  const [anime, setAnime] = useState({ id: null, title: "" });
+  const { setToast } = useToasts();
 
   useEffect(() => {
-    setCollection(collections.find((coll) => coll.id === id));
+    setCollection(collections.find((coll) => coll.id === id) || null);
   }, [collections]);
 
-  useEffect(() => {
-    if (!collection || collection.animes.length === 0) return;
+  const { data: animes, error } = useSWR(
+    collection ? `collection-detail-${collection.animes}` : null,
+    () => fetch("/api/anime?id=" + collection.animes).then((res) => res.json())
+  );
+  console.log(animes);
+  const onClickRemove = (animeId, animeTitle) => {
+    setAnime({ id: animeId, title: animeTitle });
+    setVisible(true);
+  };
 
-    const getAnimes = async () => {
-      const res = await fetch("/api/anime?id=" + collection.animes);
-      const data = await res.json();
+  const onRemoveAnime = () => {
+    if (!anime.id) return;
+    dispatch(removeFromCollection({ id, animeId: anime.id }));
+    setVisible(false);
+    setToast({
+      type: "success",
+      text: `${anime.title} removed from collection`,
+    });
+  };
 
-      if (data.media) setAnimes(data.media);
-    };
-    getAnimes();
-  }, [collection]);
-
-  if (!collection) return <Text as="h2">Collection not Found.</Text>;
+  if (!collection)
+    return (
+      <Text as="h2" center>
+        Collection not Found.
+      </Text>
+    );
 
   const { name, bannerUrl } = collection;
 
@@ -47,12 +100,24 @@ const CollectionDetail = ({ id }) => {
         />
       </Banner>
 
-      <Container>
-        <Heading mb="1rem">{name}</Heading>
+      <Heading mb="1rem">
+        <Truncate title={name}>{name}</Truncate>
+        <Button
+          auto
+          ghost
+          iconRight={<PencilAltIcon />}
+          onClick={() => setEditVisible(true)}
+        >
+          Edit
+        </Button>
+      </Heading>
 
-        {animes && (
-          <Grid>
-            {animes.map(
+      <Container>
+        {error && <Text>Error fetching collection item.</Text>}
+        <Grid>
+          {animes && animes.length === 0 && <Text>No item in collection.</Text>}
+          {animes &&
+            animes.map(
               ({
                 id,
                 title,
@@ -61,7 +126,7 @@ const CollectionDetail = ({ id }) => {
                 coverImage,
                 averageScore,
               }) => (
-                <AnimeCard
+                <AnimeCardWithAction
                   key={id}
                   id={id}
                   title={title}
@@ -69,13 +134,33 @@ const CollectionDetail = ({ id }) => {
                   episodes={episodes}
                   coverImage={coverImage}
                   averageScore={averageScore}
+                  onClickRemove={() => onClickRemove(id, title.english)}
                 />
               )
             )}
-          </Grid>
-        )}
-        {!animes && <Text>No animes in collection.</Text>}
+        </Grid>
       </Container>
+
+      <CollectionForm
+        visible={editVisible}
+        onClose={() => setEditVisible(false)}
+        collection={collection}
+      />
+
+      <Modal visible={visible} {...bindings}>
+        <Modal.Title>Remove Anime</Modal.Title>
+
+        <Modal.Content>
+          <Text>Remove {anime.title} from collection?</Text>
+        </Modal.Content>
+
+        <Modal.Action passive onClick={() => setVisible(false)}>
+          Cancel
+        </Modal.Action>
+        <Modal.Action type="error" onClick={onRemoveAnime}>
+          Remove
+        </Modal.Action>
+      </Modal>
     </>
   );
 };

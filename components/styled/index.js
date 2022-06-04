@@ -3,6 +3,7 @@ import styled from "@emotion/styled";
 export const Card = styled.div`
   display: flex;
   flex-direction: column;
+  width: 100%;
   border: 0.5px solid #dbdbdb;
   border-radius: 8px;
   overflow: hidden;
@@ -36,4 +37,16 @@ export const Heading = styled.h1`
 
 export const Text = styled.p`
   margin-bottom: ${({ mb }) => mb};
+  text-align: ${({ center }) => (center ? "center" : "left")};
+`;
+
+export const Truncate = styled.div`
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: normal;
+  max-height: 3em;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
 `;
