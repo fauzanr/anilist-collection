@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 import Image from "next/image";
 import styled from "@emotion/styled";
 import Link from "next/link";
 import { StarIcon } from "@heroicons/react/outline";
 import { Card } from "../components/styled";
+import { defaultBannerUrl } from "../utils/utils";
 
 const Cover = styled.div`
   flex: none;
@@ -41,12 +42,13 @@ const AnimeCard = ({
   coverImage,
   averageScore,
 }) => {
+  useState(coverImage.large);
   return (
     <Link href={`/anime/${id}`}>
       <Card>
         <Cover>
           <Image
-            src={coverImage.extraLarge}
+            src={coverImage.large || defaultBannerUrl}
             layout="responsive"
             objectFit="cover"
             width={200}

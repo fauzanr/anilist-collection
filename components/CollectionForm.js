@@ -5,7 +5,7 @@ import {
   createCollection,
   editCollection,
   useCollection,
-} from "../context/CollcectionProvider";
+} from "../context/CollectionProvider";
 
 const CollectionForm = ({ visible = false, collection, onClose }) => {
   const { register, getValues, setValue } = useForm();
@@ -14,8 +14,8 @@ const CollectionForm = ({ visible = false, collection, onClose }) => {
   const isEdit = collection != null;
 
   useEffect(() => {
-    setValue("name", isEdit ? collection.name : "");
-  }, [collection]);
+    visible && setValue("name", isEdit ? collection.name : "");
+  }, [collection, visible]);
 
   const onSubmit = () => {
     const name = getValues("name");

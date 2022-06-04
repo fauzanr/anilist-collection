@@ -8,7 +8,8 @@ import {
   Text,
   Container,
 } from "../../components/styled";
-import { useCollection } from "../../context/CollcectionProvider";
+import { useCollection } from "../../context/CollectionProvider";
+import { defaultBannerUrl } from "../../utils/utils";
 
 const CollectionDetail = ({ id }) => {
   const [collections, dispatch] = useCollection();
@@ -25,7 +26,8 @@ const CollectionDetail = ({ id }) => {
     const getAnimes = async () => {
       const res = await fetch("/api/anime?id=" + collection.animes);
       const data = await res.json();
-      setAnimes(data);
+
+      if (data.media) setAnimes(data.media);
     };
     getAnimes();
   }, [collection]);
@@ -38,7 +40,7 @@ const CollectionDetail = ({ id }) => {
     <>
       <Banner>
         <Image
-          src={bannerUrl || "/"}
+          src={bannerUrl || defaultBannerUrl}
           layout="fill"
           objectFit="cover"
           priority

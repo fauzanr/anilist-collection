@@ -1,9 +1,6 @@
 import { Modal, Text, useToasts } from "@geist-ui/core";
 import React from "react";
-import {
-  removeCollection,
-  useCollection,
-} from "../context/CollcectionProvider";
+import { removeCollection, useCollection } from "../context/CollectionProvider";
 
 const CollectionRemove = ({ visible = false, collection, onClose }) => {
   const [, dispatch] = useCollection();

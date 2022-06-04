@@ -8,7 +8,7 @@ import {
   addToCollection,
   createCollectionWithAnime,
   useCollection,
-} from "../../context/CollcectionProvider";
+} from "../../context/CollectionProvider";
 import {
   Button,
   Input,
@@ -17,6 +17,8 @@ import {
   useModal,
   useToasts,
 } from "@geist-ui/core";
+import { getAnime } from "../../api";
+import { defaultBannerUrl } from "../../utils/utils";
 
 const Container = styled.div`
   padding: 1rem;
@@ -159,7 +161,12 @@ const AnimeDetail = ({ anime, characters = [] }) => {
   return (
     <>
       <Banner>
-        <Image src={bannerImage} layout="fill" objectFit="cover" priority />
+        <Image
+          src={bannerImage || defaultBannerUrl}
+          layout="fill"
+          objectFit="cover"
+          priority
+        />
       </Banner>
 
       <Container>
@@ -167,7 +174,7 @@ const AnimeDetail = ({ anime, characters = [] }) => {
           <CoverPlaceholder>
             <CoverContainer>
               <Image
-                src={coverImage.extraLarge || coverImage.extra}
+                src={coverImage.large || defaultBannerUrl}
                 layout="responsive"
                 objectFit="cover"
                 width={200}
@@ -180,15 +187,15 @@ const AnimeDetail = ({ anime, characters = [] }) => {
 
           <Metrics>
             <Metric>
-              <Text as="h2">{episodes}</Text>
+              <Text as="h2">{episodes || "-"}</Text>
               <Text>Episodes</Text>
             </Metric>
             <Metric>
-              <Text as="h2">{averageScore}</Text>
+              <Text as="h2">{averageScore || "-"}</Text>
               <Text>Score</Text>
             </Metric>
             <Metric>
-              <Text as="h2">{popularity}</Text>
+              <Text as="h2">{popularity || "-"}</Text>
               <Text>Popularity</Text>
             </Metric>
           </Metrics>
@@ -281,337 +288,13 @@ const AnimeDetail = ({ anime, characters = [] }) => {
 
 export default AnimeDetail;
 
-export async function getServerSideProps() {
-  const data = {
-    Media: {
-      id: 140960,
-      title: {
-        english: "SPY x FAMILY",
-        userPreferred: "SPY×FAMILY",
-      },
-      description:
-        'Everyone has a part of themselves they cannot show to anyone else.\n<br><br>\nAt a time when all nations of the world were involved in a fierce war of information happening behind closed doors, Ostania and Westalis had been in a state of cold war against one another for decades. The Westalis Intelligence Services\' Eastern-Focused Division (WISE) sends their most talented spy, "Twilight," on a top-secret mission to investigate the movements of Donovan Desmond, the chairman of Ostania\'s National Unity Party, who is threatening peace efforts between the two nations.\n<br><br>\nThis mission is known as "Operation Strix." It consists of "putting together a family in one week in order to infiltrate social gatherings organized by the elite school that Desmond\'s son attends." <br><br>\n"Twilight" takes on the identity of psychiatrist Loid Forger and starts looking for family members. But Anya, the daughter he adopts, turns out to have the ability to read people\'s minds, while his wife, Yor, is an assassin! With it being in each of their own interests to keep these facts hidden, they start living together while concealing their true identities from one another. <br>\nWorld peace is now in the hands of this brand-new family as they embark on an adventure full of surprises.\n<br><br>\n(Source: Crunchyroll)',
-      episodes: 12,
-      bannerImage:
-        "https://s4.anilist.co/file/anilistcdn/media/anime/banner/140960-Z7xSvkRxHKfj.jpg",
-      coverImage: {
-        extraLarge:
-          "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx140960-Yl5M3AiLZAMq.png",
-        large:
-          "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx140960-Yl5M3AiLZAMq.png",
-      },
-      genres: ["Action", "Comedy", "Slice of Life", "Supernatural"],
-      averageScore: 88,
-      popularity: 172003,
-      characters: {
-        edges: [
-          {
-            node: {
-              id: 138101,
-              name: {
-                full: "Loid Forger",
-              },
-            },
-            voiceActors: [
-              {
-                id: 102695,
-                name: {
-                  full: "Takuya Eguchi",
-                },
-              },
-              {
-                id: 108235,
-                name: {
-                  full: "Alex Organ",
-                },
-              },
-              {
-                id: 100120,
-                name: {
-                  full: "Tim Knauer",
-                },
-              },
-              {
-                id: 208660,
-                name: {
-                  full: "Miguel de León",
-                },
-              },
-              {
-                id: 195092,
-                name: {
-                  full: "Guilherme Marques",
-                },
-              },
-              {
-                id: 271598,
-                name: {
-                  full: "Glen Hervé",
-                },
-              },
-            ],
-          },
-          {
-            node: {
-              id: 138102,
-              name: {
-                full: "Yor Forger",
-              },
-            },
-            voiceActors: [
-              {
-                id: 95869,
-                name: {
-                  full: "Saori Hayami",
-                },
-              },
-              {
-                id: 144358,
-                name: {
-                  full: "Natalie Van Sistine",
-                },
-              },
-              {
-                id: 133021,
-                name: {
-                  full: "Daniela Molina",
-                },
-              },
-              {
-                id: 106623,
-                name: {
-                  full: "Romina Marroquín Payró",
-                },
-              },
-              {
-                id: 199293,
-                name: {
-                  full: "Maíra Paris",
-                },
-              },
-              {
-                id: 102669,
-                name: {
-                  full: "Adeline Chetail",
-                },
-              },
-            ],
-          },
-          {
-            node: {
-              id: 138100,
-              name: {
-                full: "Anya Forger",
-              },
-            },
-            voiceActors: [
-              {
-                id: 112215,
-                name: {
-                  full: "Atsumi Tanezaki",
-                },
-              },
-              {
-                id: 120247,
-                name: {
-                  full: "Megan Shipman",
-                },
-              },
-              {
-                id: 143592,
-                name: {
-                  full: "Lana Finn Marti",
-                },
-              },
-              {
-                id: 189432,
-                name: {
-                  full: "Elizabeth Infante",
-                },
-              },
-              {
-                id: 205014,
-                name: {
-                  full: "Nina Carvalho",
-                },
-              },
-              {
-                id: 221274,
-                name: {
-                  full: "Lila Lacombe",
-                },
-              },
-            ],
-          },
-          {
-            node: {
-              id: 157888,
-              name: {
-                full: "Franky Franklin",
-              },
-            },
-            voiceActors: [
-              {
-                id: 95283,
-                name: {
-                  full: "Hiroyuki Yoshino",
-                },
-              },
-              {
-                id: 102450,
-                name: {
-                  full: "Anthony Bowling",
-                },
-              },
-              {
-                id: 105706,
-                name: {
-                  full: "Dirk Petrick",
-                },
-              },
-              {
-                id: 272074,
-                name: {
-                  full: "Jean-Rémi Tichit",
-                },
-              },
-              {
-                id: 100133,
-                name: {
-                  full: "Thiago Keplmair",
-                },
-              },
-              {
-                id: 116839,
-                name: {
-                  full: "Miguel Ángel Ruiz",
-                },
-              },
-            ],
-          },
-          {
-            node: {
-              id: 180190,
-              name: {
-                full: "Henry Henderson",
-              },
-            },
-            voiceActors: [
-              {
-                id: 101755,
-                name: {
-                  full: "Kazuhiro Yamaji",
-                },
-              },
-              {
-                id: 249500,
-                name: {
-                  full: "Julien Kramer",
-                },
-              },
-              {
-                id: 100431,
-                name: {
-                  full: "Barry Yandell",
-                },
-              },
-              {
-                id: 182488,
-                name: {
-                  full: "Hélio Ribeiro",
-                },
-              },
-              {
-                id: 96669,
-                name: {
-                  full: "Erich Räuker",
-                },
-              },
-              {
-                id: 201026,
-                name: {
-                  full: "Rodrigo Martínez",
-                },
-              },
-            ],
-          },
-          {
-            node: {
-              id: 180192,
-              name: {
-                full: "Donovan Desmond",
-              },
-            },
-            voiceActors: [
-              {
-                id: 104256,
-                name: {
-                  full: "Philippe Roullier",
-                },
-              },
-            ],
-          },
-          {
-            node: {
-              id: 157887,
-              name: {
-                full: "Sylvia Sherwood",
-              },
-            },
-            voiceActors: [
-              {
-                id: 95428,
-                name: {
-                  full: "Yuuko Kaida",
-                },
-              },
-              {
-                id: 277088,
-                name: {
-                  full: "Sabrina Marchese",
-                },
-              },
-              {
-                id: 103549,
-                name: {
-                  full: "Antje von der Ahe",
-                },
-              },
-              {
-                id: 257282,
-                name: {
-                  full: "Clara Rocha",
-                },
-              },
-              {
-                id: 257282,
-                name: {
-                  full: "Clara Rocha",
-                },
-              },
-              {
-                id: 95475,
-                name: {
-                  full: "Stephanie Young",
-                },
-              },
-              {
-                id: 108265,
-                name: {
-                  full: "Karina Altamirano",
-                },
-              },
-            ],
-          },
-        ],
-      },
-    },
-  };
+export async function getServerSideProps(context) {
+  const { id } = context.params;
+
+  const { data } = await getAnime(id);
 
   const characters = data.Media?.characters?.edges || [];
   const anime = data.Media;
-
-  delete anime?.characters;
 
   return {
     props: { anime, characters },

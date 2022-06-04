@@ -1,5 +1,9 @@
 import React, { createContext, useContext, useEffect, useReducer } from "react";
-import { generateId } from "../utils/utils";
+import {
+  collectionStorageName,
+  defaultBannerUrl,
+  generateId,
+} from "../utils/utils";
 
 // {
 //   id: '',
@@ -7,9 +11,6 @@ import { generateId } from "../utils/utils";
 //   bannerUrl: ''
 //   animes: [],
 // }
-
-const collectionStorageName = "my-collections";
-const defaultBannerUrl = "/defaultBanner.jpeg";
 
 export const createCollection = ({ name }) => ({
   type: "CREATE",
@@ -77,7 +78,7 @@ const collectionReducer = (state, action) => {
       if (collection1) {
         if (collection1.animes.length === 0) {
           collection1.animes = [payload.animeId];
-          collection1.bannerUrl = payload.bannerUrl;
+          collection1.bannerUrl = payload.bannerUrl || defaultBannerUrl;
         } else {
           const animeSet = new Set(collection1.animes);
           animeSet.add(payload.animeId);

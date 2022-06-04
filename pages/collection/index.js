@@ -1,11 +1,12 @@
 import React, { useState } from "react";
-import { useCollection } from "../../context/CollcectionProvider";
+import { useCollection } from "../../context/CollectionProvider";
 import CollectionForm from "../../components/CollectionForm";
 import CollectionRemove from "../../components/CollectionRemove";
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@geist-ui/core";
 import { Card } from "../../components/styled";
+import { defaultBannerUrl } from "../../utils/utils";
 
 const Collection = () => {
   const [collections] = useCollection();
@@ -36,7 +37,7 @@ const Collection = () => {
             </Button>
             <div style={{ width: "50px", height: "50px" }}>
               <Image
-                src={coll.bannerUrl}
+                src={coll.bannerUrl || defaultBannerUrl}
                 layout="responsive"
                 objectFit="cover"
                 width="50"

@@ -52,8 +52,8 @@ const Navbar = () => {
       <NavbarLogo>AniList</NavbarLogo>
       <NavbarNav>
         <NavbarItem>
-          <Link href="/" passHref>
-            <NavbarLink active={pathname === "/"}>Explore</NavbarLink>
+          <Link href="/anime" passHref>
+            <NavbarLink active={pathname === "/anime"}>Explore</NavbarLink>
           </Link>
         </NavbarItem>
         <NavbarItem>
