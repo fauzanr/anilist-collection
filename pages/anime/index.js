@@ -1,9 +1,14 @@
 import Head from "next/head";
+import { useRouter } from "next/router";
+import { Pagination } from "@geist-ui/core";
 import { getAnimes } from "../../api";
 import AnimeCard from "../../components/AnimeCard";
-import { Grid, Heading, Container } from "../../components/styled";
+import { Grid, Heading, Container, Text } from "../../components/styled";
 
 const Home = ({ animes, pageInfo }) => {
+  const router = useRouter();
+  const { currentPage, lastPage } = pageInfo;
+
   return (
     <>
       <Head>
@@ -15,6 +20,7 @@ const Home = ({ animes, pageInfo }) => {
       <Heading>Explore Anime</Heading>
 
       <Container>
+        {animes.length === 0 && <Text center>No data available.</Text>}
         <Grid>
           {animes.map(
             ({
@@ -37,6 +43,19 @@ const Home = ({ animes, pageInfo }) => {
             )
           )}
         </Grid>
+
+        <Container center>
+          <Pagination
+            page={currentPage > lastPage ? currentPage : currentPage}
+            initialPage={currentPage > lastPage ? currentPage : currentPage}
+            count={lastPage}
+            limit={5}
+            margin="auto"
+            onChange={(newPage) =>
+              router.push({ pathname: "/anime", query: { page: newPage } })
+            }
+          />
+        </Container>
       </Container>
     </>
   );
@@ -47,7 +66,7 @@ export default Home;
 export async function getServerSideProps(context) {
   const { page } = context.query;
 
-  const { data } = await getAnimes(page || 1, 10);
+  const { data } = await getAnimes(parseInt(page) || 1, 10);
 
   const animes = data.Page.media;
   const pageInfo = data.Page.pageInfo;

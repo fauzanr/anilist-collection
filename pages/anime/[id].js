@@ -200,7 +200,7 @@ const AnimeDetail = ({ anime, characters = [] }) => {
             </Metric>
           </Metrics>
 
-          <Button type="success" onClick={() => setVisible(true)}>
+          <Button type="success" mb={1} onClick={() => setVisible(true)}>
             + Add to My Collection
           </Button>
 

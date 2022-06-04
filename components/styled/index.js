@@ -28,6 +28,7 @@ export const Grid = styled.div`
 
 export const Container = styled.div`
   padding: 1rem;
+  text-align: ${({ center }) => (center ? "center" : "left")};
 `;
 
 export const Heading = styled.h1`

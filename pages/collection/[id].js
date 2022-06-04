@@ -64,7 +64,7 @@ const CollectionDetail = ({ id }) => {
     collection ? `collection-detail-${collection.animes}` : null,
     () => fetch("/api/anime?id=" + collection.animes).then((res) => res.json())
   );
-  console.log(animes);
+
   const onClickRemove = (animeId, animeTitle) => {
     setAnime({ id: animeId, title: animeTitle });
     setVisible(true);
