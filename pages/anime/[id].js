@@ -108,6 +108,13 @@ const CharacterList = styled.div`
 `;
 
 const AnimeDetail = ({ anime, characters = [] }) => {
+  if (anime == null)
+    return (
+      <Container>
+        <Text center>Couldn't fetch anime.</Text>
+      </Container>
+    );
+
   const {
     id,
     title = {},
@@ -301,12 +308,20 @@ export default AnimeDetail;
 export async function getServerSideProps(context) {
   const { id } = context.params;
 
-  const { data } = await getAnime(id);
+  try {
+    const { data } = await getAnime(id);
+    const characters = data.Media?.characters?.edges || [];
+    const anime = data.Media;
 
-  const characters = data.Media?.characters?.edges || [];
-  const anime = data.Media;
-
-  return {
-    props: { anime, characters },
-  };
+    return {
+      props: { anime, characters },
+    };
+  } catch {
+    return {
+      props: {
+        anime: null,
+        characters: [],
+      },
+    };
+  }
 }

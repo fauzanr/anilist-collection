@@ -83,9 +83,7 @@ const CollectionDetail = ({ id }) => {
   if (!collection)
     return (
       <Container>
-        <Text as="h2" center>
-          Collection not Found.
-        </Text>
+        <Text center>Collection not Found.</Text>
       </Container>
     );
 
