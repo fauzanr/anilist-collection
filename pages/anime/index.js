@@ -17,9 +17,9 @@ const Home = ({ animes, pageInfo }) => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <Heading>Explore Anime</Heading>
-
       <Container>
+        <Heading>Explore Anime</Heading>
+
         {animes.length === 0 && <Text center>No data available.</Text>}
         <Grid>
           {animes.map(
@@ -46,12 +46,13 @@ const Home = ({ animes, pageInfo }) => {
 
         <Container center>
           <Pagination
-            page={currentPage > lastPage ? currentPage : currentPage}
-            initialPage={currentPage > lastPage ? currentPage : currentPage}
+            page={currentPage}
+            initialPage={currentPage}
             count={lastPage}
             limit={5}
             margin="auto"
             onChange={(newPage) =>
+              newPage !== currentPage &&
               router.push({ pathname: "/anime", query: { page: newPage } })
             }
           />

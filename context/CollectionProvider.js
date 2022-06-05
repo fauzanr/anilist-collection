@@ -60,9 +60,9 @@ const collectionReducer = (state, action) => {
       break;
 
     case "EDIT":
-      const selectedCollection0 = state.find((coll) => coll.id === payload.id);
-      if (selectedCollection0) {
-        selectedCollection0.name = payload.name;
+      const collection0 = state.find((coll) => coll.id === payload.id);
+      if (collection0) {
+        collection0.name = payload.name;
       }
       newState = state;
       break;

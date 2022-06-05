@@ -54,9 +54,9 @@ const AnimeCard = ({
           <Truncate as="p">{description || "-"}</Truncate>
           <Footer>
             <StarIcon height="1em" />
-            <span>{averageScore}</span>
+            <span>{averageScore || "-"}</span>
             <span>•</span>
-            <span>{episodes} EP</span>
+            <span>{episodes || "-"} EP</span>
           </Footer>
         </Body>
       </Card>

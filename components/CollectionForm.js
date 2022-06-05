@@ -1,6 +1,7 @@
 import { Input, Modal, Text, useToasts } from "@geist-ui/core";
 import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
+import { collectionNameValidation } from "../utils/utils";
 import {
   createCollection,
   editCollection,
@@ -8,18 +9,24 @@ import {
 } from "../context/CollectionProvider";
 
 const CollectionForm = ({ visible = false, collection, onClose }) => {
-  const { register, getValues, setValue } = useForm();
+  const { register, getValues, setValue, trigger, getFieldState } = useForm();
   const { setToast } = useToasts();
-  const [, dispatch] = useCollection();
+  const [collections, dispatch] = useCollection();
   const isEdit = collection != null;
 
   useEffect(() => {
     visible && setValue("name", isEdit ? collection.name : "");
   }, [collection, visible]);
 
-  const onSubmit = () => {
-    const name = getValues("name");
-    if (name.trim() == "") return;
+  const onSubmit = async () => {
+    await trigger("name", { shouldFocus: true });
+    const { error } = getFieldState("name");
+
+    if (error) {
+      setToast({ type: "error", text: error.message });
+      return;
+    }
+    const name = getValues("name").trim();
 
     if (isEdit === true) {
       dispatch(editCollection({ id: collection?.id, name }));
@@ -28,6 +35,7 @@ const CollectionForm = ({ visible = false, collection, onClose }) => {
       dispatch(createCollection({ name }));
       setToast({ type: "success", text: "Collection added" });
     }
+
     onClose();
   };
 
@@ -43,7 +51,14 @@ const CollectionForm = ({ visible = false, collection, onClose }) => {
           placeholder="Enter collection name"
           width="100%"
           marginBottom="1rem"
-          {...register("name")}
+          {...register(
+            "name",
+            collectionNameValidation(
+              isEdit
+                ? collections.filter((coll) => coll.id !== collection.id)
+                : collections
+            )
+          )}
         />
       </Modal.Content>
 

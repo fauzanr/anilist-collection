@@ -28,6 +28,8 @@ export const Grid = styled.div`
 
 export const Container = styled.div`
   padding: 1rem;
+  margin: auto;
+  max-width: 1500px;
   text-align: ${({ center }) => (center ? "center" : "left")};
 `;
 

@@ -3,7 +3,9 @@ import Image from "next/image";
 import Link from "next/link";
 import styled from "@emotion/styled";
 import { Controller, useForm } from "react-hook-form";
-import { Banner, Text } from "../../components/styled";
+import { getAnime } from "../../api";
+import { collectionNameValidation, defaultBannerUrl } from "../../utils/utils";
+import { Banner, Container, Text } from "../../components/styled";
 import {
   addToCollection,
   createCollectionWithAnime,
@@ -17,14 +19,8 @@ import {
   useModal,
   useToasts,
 } from "@geist-ui/core";
-import { getAnime } from "../../api";
-import { defaultBannerUrl } from "../../utils/utils";
 
-const Container = styled.div`
-  padding: 1rem;
-  max-width: 1500px;
-  margin: auto;
-
+const ResponsiveContainer = styled(Container)`
   @media (min-width: ${({ theme }) => theme.breakpoints.md}) {
     display: grid;
     grid-template-columns: 1fr 280px;
@@ -126,24 +122,30 @@ const AnimeDetail = ({ anime, characters = [] }) => {
 
   const { visible, setVisible, bindings } = useModal();
   const [collections, dispatch] = useCollection();
-  const { register, getValues, setValue, control } = useForm();
+  const { register, getValues, setValue, trigger, getFieldState, control } =
+    useForm();
   const [isNewCollection, setIsNewCollection] = useState(false);
   const { setToast } = useToasts();
 
   const fullTitle = title.english || title.userPreferred;
   const inCollections = collections.filter(({ animes }) => animes.includes(id));
 
-  // const { field: selectField } = useController({ name: "collectionId" });
-
   const onCloseModal = () => {
     setVisible(false);
     setIsNewCollection(false);
   };
 
-  const onSubmitModal = () => {
+  const onSubmitModal = async () => {
     if (isNewCollection === true) {
-      const name = getValues("collectionName");
-      if (name.trim() == "") return;
+      await trigger("collectionName");
+      const { error } = getFieldState("collectionName");
+
+      if (error) {
+        setToast({ type: "error", text: error.message });
+        return;
+      }
+
+      const name = getValues("collectionName").trim();
       dispatch(createCollectionWithAnime({ name, anime }));
       setToast({ type: "success", text: "Added Successfully" });
       setValue("collectionName", "");
@@ -169,7 +171,7 @@ const AnimeDetail = ({ anime, characters = [] }) => {
         />
       </Banner>
 
-      <Container>
+      <ResponsiveContainer>
         <Main>
           <CoverPlaceholder>
             <CoverContainer>
@@ -192,7 +194,7 @@ const AnimeDetail = ({ anime, characters = [] }) => {
             </Metric>
             <Metric>
               <Text as="h2">{averageScore || "-"}</Text>
-              <Text>Score</Text>
+              <Text>Rating</Text>
             </Metric>
             <Metric>
               <Text as="h2">{popularity || "-"}</Text>
@@ -232,7 +234,7 @@ const AnimeDetail = ({ anime, characters = [] }) => {
             ))}
           </CharacterList>
         </Aside>
-      </Container>
+      </ResponsiveContainer>
 
       <Modal visible={visible} {...bindings} onClose={onCloseModal}>
         <Modal.Title>Add to My Collection</Modal.Title>
@@ -246,8 +248,16 @@ const AnimeDetail = ({ anime, characters = [] }) => {
                 placeholder="Enter new collection name"
                 width="100%"
                 marginBottom="1rem"
-                {...register("collectionName")}
+                autoFocus
+                {...register(
+                  "collectionName",
+                  collectionNameValidation(collections)
+                )}
               />
+
+              <Button width="100%" onClick={() => setIsNewCollection(false)}>
+                Pick a collection
+              </Button>
             </>
           ) : (
             <>

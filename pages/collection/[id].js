@@ -82,9 +82,11 @@ const CollectionDetail = ({ id }) => {
 
   if (!collection)
     return (
-      <Text as="h2" center>
-        Collection not Found.
-      </Text>
+      <Container>
+        <Text as="h2" center>
+          Collection not Found.
+        </Text>
+      </Container>
     );
 
   const { name, bannerUrl } = collection;
@@ -100,19 +102,19 @@ const CollectionDetail = ({ id }) => {
         />
       </Banner>
 
-      <Heading mb="1rem">
-        <Truncate title={name}>{name}</Truncate>
-        <Button
-          auto
-          ghost
-          iconRight={<PencilAltIcon />}
-          onClick={() => setEditVisible(true)}
-        >
-          Edit
-        </Button>
-      </Heading>
-
       <Container>
+        <Heading>
+          <Truncate title={name}>{name}</Truncate>
+          <Button
+            auto
+            ghost
+            iconRight={<PencilAltIcon />}
+            onClick={() => setEditVisible(true)}
+          >
+            Edit
+          </Button>
+        </Heading>
+
         {error && <Text>Error fetching collection item.</Text>}
         <Grid>
           {animes && animes.length === 0 && <Text>No item in collection.</Text>}
