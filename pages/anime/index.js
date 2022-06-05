@@ -1,12 +1,23 @@
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { Pagination } from "@geist-ui/core";
-import { getAnimes } from "../../api";
+import { GET_ANIMES } from "../../api/queries";
 import AnimeCard from "../../components/AnimeCard";
 import { Grid, Heading, Container, Text } from "../../components/styled";
+import { initializeApollo } from "../../api/apollo";
+import { useQuery } from "@apollo/client";
 
-const Home = ({ animes, pageInfo }) => {
+const Home = ({ page }) => {
   const router = useRouter();
+  const { data, error } = useQuery(GET_ANIMES, {
+    variables: {
+      page: page || 1,
+      perPage: 10,
+    },
+  });
+
+  const animes = data?.Page?.media;
+  const pageInfo = data?.Page?.pageInfo || {};
   const { currentPage, lastPage } = pageInfo;
 
   return (
@@ -20,28 +31,32 @@ const Home = ({ animes, pageInfo }) => {
       <Container>
         <Heading>Explore Anime</Heading>
 
-        {animes.length === 0 && <Text center>No data available.</Text>}
+        {error && <Text center>Error fetching data.</Text>}
+        {animes && animes.length === 0 && (
+          <Text center>No data available.</Text>
+        )}
         <Grid>
-          {animes.map(
-            ({
-              id,
-              title,
-              description,
-              episodes,
-              coverImage,
-              averageScore,
-            }) => (
-              <AnimeCard
-                key={id}
-                id={id}
-                title={title}
-                description={description}
-                episodes={episodes}
-                coverImage={coverImage}
-                averageScore={averageScore}
-              />
-            )
-          )}
+          {animes &&
+            animes.map(
+              ({
+                id,
+                title,
+                description,
+                episodes,
+                coverImage,
+                averageScore,
+              }) => (
+                <AnimeCard
+                  key={id}
+                  id={id}
+                  title={title}
+                  description={description}
+                  episodes={episodes}
+                  coverImage={coverImage}
+                  averageScore={averageScore}
+                />
+              )
+            )}
         </Grid>
 
         <Container center>
@@ -64,14 +79,24 @@ const Home = ({ animes, pageInfo }) => {
 
 export default Home;
 
-export async function getServerSideProps(context) {
-  const { page } = context.query;
+export async function getServerSideProps({ query }) {
+  const { page } = query;
+  const pageInt = parseInt(page);
 
-  const { data } = await getAnimes(parseInt(page) || 1, 10);
+  const apolloClient = initializeApollo();
+  await apolloClient.query({
+    query: GET_ANIMES,
+    variables: {
+      page: pageInt || 1,
+      perPage: 10,
+      ids: undefined,
+    },
+  });
 
-  const animes = data.Page.media;
-  const pageInfo = data.Page.pageInfo;
   return {
-    props: { animes, pageInfo },
+    props: {
+      initialApolloState: apolloClient.cache.extract(),
+      page: pageInt,
+    },
   };
 }

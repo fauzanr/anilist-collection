@@ -1,6 +1,5 @@
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
-import useSWR from "swr";
 import { Button, Modal, useModal, useToasts } from "@geist-ui/core";
 import { TrashIcon, PencilAltIcon } from "@heroicons/react/solid";
 import AnimeCard from "../../components/AnimeCard";
@@ -19,6 +18,8 @@ import {
 } from "../../components/styled";
 import styled from "@emotion/styled";
 import CollectionForm from "../../components/CollectionForm";
+import { useQuery } from "@apollo/client";
+import { GET_ANIMES } from "../../api/queries";
 
 const Wrapper = styled.div`
   display: flex;
@@ -56,14 +57,15 @@ const CollectionDetail = ({ id }) => {
   const [anime, setAnime] = useState({ id: null, title: "" });
   const { setToast } = useToasts();
 
+  const { data, error, loading } = useQuery(GET_ANIMES, {
+    variables: { page: 1, perPage: 10, ids: collection?.animes || [] },
+  });
+
+  const animes = data?.Page?.media || [];
+
   useEffect(() => {
     setCollection(collections.find((coll) => coll.id === id) || null);
-  }, [collections]);
-
-  const { data: animes, error } = useSWR(
-    collection ? `collection-detail-${collection.animes}` : null,
-    () => fetch("/api/anime?id=" + collection.animes).then((res) => res.json())
-  );
+  }, [collections, id]);
 
   const onClickRemove = (animeId, animeTitle) => {
     setAnime({ id: animeId, title: animeTitle });
@@ -117,7 +119,9 @@ const CollectionDetail = ({ id }) => {
 
         {error && <Text>Error fetching collection item.</Text>}
         <Grid>
-          {animes && animes.length === 0 && <Text>No item in collection.</Text>}
+          {!loading && animes.length === 0 && (
+            <Text>No item in collection.</Text>
+          )}
           {animes &&
             animes.map(
               ({
@@ -169,8 +173,10 @@ const CollectionDetail = ({ id }) => {
 
 export default CollectionDetail;
 
-export async function getServerSideProps(context) {
+export async function getServerSideProps({ params }) {
   return {
-    props: { id: context.params.id },
+    props: {
+      id: params.id,
+    },
   };
 }

@@ -3,9 +3,9 @@ import Image from "next/image";
 import Link from "next/link";
 import styled from "@emotion/styled";
 import { Controller, useForm } from "react-hook-form";
-import { getAnime } from "../../api";
 import { collectionNameValidation, defaultBannerUrl } from "../../utils/utils";
 import { Banner, Container, Text } from "../../components/styled";
+import { GET_ANIME } from "../../api/queries";
 import {
   addToCollection,
   createCollectionWithAnime,
@@ -14,11 +14,14 @@ import {
 import {
   Button,
   Input,
+  Loading,
   Modal,
   Select,
   useModal,
   useToasts,
 } from "@geist-ui/core";
+import { initializeApollo } from "../../api/apollo";
+import { useQuery } from "@apollo/client";
 
 const ResponsiveContainer = styled(Container)`
   @media (min-width: ${({ theme }) => theme.breakpoints.md}) {
@@ -107,9 +110,16 @@ const CharacterList = styled.div`
   margin-bottom: 2rem;
 `;
 
-const AnimeDetail = ({ anime, characters = [] }) => {
+const AnimeDetail = ({ id }) => {
+  const { data, error, loading } = useQuery(GET_ANIME, {
+    variables: {
+      mediaId: id,
+    },
+  });
+  const anime = data?.Media || {};
+  const characters = anime?.characters?.edges || [];
+
   const {
-    id,
     title = {},
     description,
     episodes,
@@ -128,7 +138,9 @@ const AnimeDetail = ({ anime, characters = [] }) => {
   const { setToast } = useToasts();
 
   const fullTitle = title.english || title.userPreferred;
-  const inCollections = collections.filter(({ animes }) => animes.includes(id));
+  const inCollections = collections.filter(({ animes }) =>
+    animes.includes(parseInt(id))
+  );
 
   const onCloseModal = () => {
     setVisible(false);
@@ -159,6 +171,15 @@ const AnimeDetail = ({ anime, characters = [] }) => {
       onCloseModal(false);
     }
   };
+
+  if (loading) return <Loading />;
+
+  if (error)
+    return (
+      <Container>
+        <Text>Anime not found</Text>
+      </Container>
+    );
 
   return (
     <>
@@ -298,15 +319,24 @@ const AnimeDetail = ({ anime, characters = [] }) => {
 
 export default AnimeDetail;
 
-export async function getServerSideProps(context) {
-  const { id } = context.params;
+export async function getServerSideProps({ params }) {
+  const { id } = params;
 
-  const { data } = await getAnime(id);
+  const apolloClient = initializeApollo();
 
-  const characters = data.Media?.characters?.edges || [];
-  const anime = data.Media;
-
-  return {
-    props: { anime, characters },
-  };
+  try {
+    await apolloClient.query({
+      query: GET_ANIME,
+      variables: {
+        mediaId: id,
+      },
+    });
+  } finally {
+    return {
+      props: {
+        id,
+        initialApolloState: apolloClient.cache.extract(),
+      },
+    };
+  }
 }

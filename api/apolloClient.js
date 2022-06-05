@@ -1,10 +1,14 @@
-import { ApolloClient, InMemoryCache } from "@apollo/client";
+import { ApolloClient, HttpLink, InMemoryCache } from "@apollo/client";
+import getConfig from "next/config";
 
-const config = {
-  uri: process.env.ANILIST_URL,
-  cache: new InMemoryCache(),
-};
+function createApolloClient() {
+  return new ApolloClient({
+    ssrMode: typeof window === "undefined",
+    link: new HttpLink({
+      uri: "https://graphql.anilist.co/",
+    }),
+    cache: new InMemoryCache(),
+  });
+}
 
-const client = new ApolloClient(config);
-
-export default client;
+export default createApolloClient;
