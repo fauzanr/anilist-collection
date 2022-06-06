@@ -15,6 +15,7 @@ import {
 } from "../../components/styled";
 import { defaultBannerUrl } from "../../utils/utils";
 import { PencilAltIcon, TrashIcon } from "@heroicons/react/solid";
+import Head from "next/head";
 
 const CardRelative = styled(Card)`
   position: relative;
@@ -71,6 +72,10 @@ const Collection = () => {
 
   return (
     <>
+      <Head>
+        <title>My Collection</title>
+      </Head>
+
       <Container>
         <Heading>My Collections</Heading>
 
@@ -90,6 +95,7 @@ const Collection = () => {
                     src={coll.bannerUrl || defaultBannerUrl}
                     layout="fill"
                     objectFit="cover"
+                    alt="Collection Banner"
                   />
                 </BackDrop>
 

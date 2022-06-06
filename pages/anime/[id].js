@@ -8,6 +8,7 @@ import { Banner, Container, Text } from "../../components/styled";
 import { useCollection } from "../../context/CollectionProvider";
 import { Button, useModal } from "@geist-ui/core";
 import AddToCollection from "../../components/AddToCollection";
+import Head from "next/head";
 
 const ResponsiveContainer = styled(Container)`
   @media (min-width: ${({ theme }) => theme.breakpoints.md}) {
@@ -122,11 +123,16 @@ const AnimeDetail = ({ anime, characters = [] }) => {
 
   return (
     <>
+      <Head>
+        <title>{title.english || title.userPreferred}</title>
+      </Head>
+
       <Banner>
         <Image
           src={bannerImage || defaultBannerUrl}
           layout="fill"
           objectFit="cover"
+          alt="Banner"
           priority
         />
       </Banner>
@@ -141,6 +147,7 @@ const AnimeDetail = ({ anime, characters = [] }) => {
                 objectFit="cover"
                 width={200}
                 height={200}
+                alt={title.english || title.userPreferred}
               />
             </CoverContainer>
           </CoverPlaceholder>

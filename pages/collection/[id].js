@@ -19,6 +19,7 @@ import {
 } from "../../components/styled";
 import styled from "@emotion/styled";
 import CollectionForm from "../../components/CollectionForm";
+import Head from "next/head";
 
 const Wrapper = styled.div`
   display: flex;
@@ -91,11 +92,16 @@ const CollectionDetail = ({ id }) => {
 
   return (
     <>
+      <Head>
+        <title>My Collection | {name}</title>
+      </Head>
+
       <Banner>
         <Image
           src={bannerUrl || defaultBannerUrl}
           layout="fill"
           objectFit="cover"
+          alt="Banner"
           priority
         />
       </Banner>

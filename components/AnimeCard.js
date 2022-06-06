@@ -45,6 +45,7 @@ const AnimeCard = ({
             objectFit="cover"
             width={200}
             height={200}
+            alt={title}
           />
         </Cover>
         <Body>
