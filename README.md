@@ -5,18 +5,19 @@ This is anime collection web app using [AniList](https://anilist.gitbook.io/anil
 Features:
 
 - Anime list page
+  - Bulk add to collection
 - Anime detail page
-  -- Add to collection
-  -- In collection list
+  - Add to collection
+  - In collection list
 - Collection list page
-  -- Add, edit, remove collection
+  - Add, edit, remove collection
 - Collection detail page
-  -- Edit collection
-  -- Remove anime from collection
+  - Edit collection
+  - Remove anime from collection
 
 ## Preview
 
-Live Site URL: [TBD](#)
+Live Site URL: [https://anilist-collection.vercel.app/](https://anilist-collection.vercel.app/)
 
 ## Getting Started
 
@@ -32,10 +33,14 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 ## Built with
 
-- Framework: NextJs, React
+- Framework: NextJs, React (Context API, Hooks)
 - Css Library: Emotion, Geist UI
 - Fetching Library: Apollo Client
 - WebStorage API
+
+## Lighthouse
+
+![](./lighthouse1.png)
 
 ## Author
 

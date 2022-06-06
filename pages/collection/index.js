@@ -82,7 +82,11 @@ const Collection = () => {
       <Container>
         <Heading>My Collections</Heading>
 
-        <Button mb={1} onClick={(e) => openModal(e, "form")}>
+        <Button
+          mb={1}
+          data-testid="add-btn"
+          onClick={(e) => openModal(e, "form")}
+        >
           + Add a Collection
         </Button>
 
@@ -92,6 +96,7 @@ const Collection = () => {
               <CardRelative
                 onMouseOver={() => setHover(coll.id)}
                 onMouseLeave={() => setHover(null)}
+                data-testid={"collection-card-" + coll.id}
               >
                 <BackDrop>
                   <Image
@@ -107,11 +112,13 @@ const Collection = () => {
                     <Button
                       auto
                       icon={<PencilAltIcon />}
+                      data-testid={"edit-btn-" + coll.id}
                       onClick={(e) => openModal(e, "form", coll)}
                     />
                     <Button
                       auto
                       icon={<TrashIcon />}
+                      data-testid={"remove-btn-" + coll.id}
                       onClick={(e) => openModal(e, "remove", coll)}
                     />
                   </CollectionActions>

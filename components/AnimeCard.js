@@ -37,7 +37,7 @@ const AnimeCard = ({
   useState(coverImage.large);
   return (
     <Link href={`/anime/${id}`}>
-      <Card>
+      <Card data-testid={"anime-card-" + id}>
         <Cover>
           <Image
             src={coverImage.large || defaultBannerUrl}
