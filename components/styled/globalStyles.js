@@ -3,6 +3,8 @@ import { css, Global } from "@emotion/react";
 export default (
   <Global
     styles={css`
+      @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap");
+
       :root {
         --txtBlack: #04111d;
         --txtPrimary: #04111dbf;

@@ -16,7 +16,7 @@ const CollectionForm = ({ visible = false, collection, onClose }) => {
 
   useEffect(() => {
     visible && setValue("name", isEdit ? collection.name : "");
-  }, [collection, visible]);
+  }, [collection, visible, isEdit]);
 
   const onSubmit = async () => {
     await trigger("name", { shouldFocus: true });

@@ -59,7 +59,7 @@ const CollectionDetail = ({ id }) => {
 
   useEffect(() => {
     setCollection(collections.find((coll) => coll.id === id) || null);
-  }, [collections]);
+  }, [collections, id]);
 
   const { data: animes, error } = useSWR(
     collection ? `collection-detail-${collection.animes}` : null,

@@ -98,15 +98,20 @@ const CharacterList = styled.div`
 `;
 
 const AnimeDetail = ({ anime, characters = [] }) => {
+  const { visible, setVisible, bindings } = useModal();
+  const [collections] = useCollection();
+  const inCollections = collections.filter(({ animes }) =>
+    animes.includes(anime?.id)
+  );
+
   if (anime == null)
     return (
       <Container>
-        <Text center>Couldn't fetch anime.</Text>
+        <Text center>Could not fetch anime.</Text>
       </Container>
     );
 
   const {
-    id,
     title = {},
     description,
     episodes,
@@ -116,10 +121,6 @@ const AnimeDetail = ({ anime, characters = [] }) => {
     averageScore,
     popularity,
   } = anime;
-
-  const { visible, setVisible, bindings } = useModal();
-  const [collections] = useCollection();
-  const inCollections = collections.filter(({ animes }) => animes.includes(id));
 
   return (
     <>
