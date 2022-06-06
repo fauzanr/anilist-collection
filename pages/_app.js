@@ -1,21 +1,20 @@
-import "../styles/globals.css";
 import { ThemeProvider } from "@emotion/react";
-import { GeistProvider, CssBaseline } from "@geist-ui/core";
+import { GeistProvider } from "@geist-ui/core";
 import CollectionProvider from "../context/CollectionProvider";
 import theme from "../utils/theme";
 import Layout from "../components/Layout";
 
 function MyApp({ Component, pageProps }) {
   return (
-    <GeistProvider>
-      <ThemeProvider theme={theme}>
-        <CollectionProvider>
+    <ThemeProvider theme={theme}>
+      <CollectionProvider>
+        <GeistProvider>
           <Layout>
             <Component {...pageProps} />
           </Layout>
-        </CollectionProvider>
-      </ThemeProvider>
-    </GeistProvider>
+        </GeistProvider>
+      </CollectionProvider>
+    </ThemeProvider>
   );
 }
 
