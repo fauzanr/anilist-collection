@@ -6,7 +6,7 @@ export default async function handler(req, res) {
     if (!id) return res.status(200).json([]);
 
     const arrayId = id.split(",");
-    const { data } = await getAnimes(1, 10, arrayId);
+    const { data } = await getAnimes(1, arrayId.length, arrayId);
 
     res.status(200).json(data.Page.media);
   }

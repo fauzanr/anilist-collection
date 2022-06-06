@@ -1,24 +1,13 @@
-import React, { useState } from "react";
+import React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import styled from "@emotion/styled";
-import { Controller, useForm } from "react-hook-form";
 import { getAnime } from "../../api";
-import { collectionNameValidation, defaultBannerUrl } from "../../utils/utils";
+import { defaultBannerUrl } from "../../utils/utils";
 import { Banner, Container, Text } from "../../components/styled";
-import {
-  addToCollection,
-  createCollectionWithAnime,
-  useCollection,
-} from "../../context/CollectionProvider";
-import {
-  Button,
-  Input,
-  Modal,
-  Select,
-  useModal,
-  useToasts,
-} from "@geist-ui/core";
+import { useCollection } from "../../context/CollectionProvider";
+import { Button, useModal } from "@geist-ui/core";
+import AddToCollection from "../../components/AddToCollection";
 
 const ResponsiveContainer = styled(Container)`
   @media (min-width: ${({ theme }) => theme.breakpoints.md}) {
@@ -128,44 +117,8 @@ const AnimeDetail = ({ anime, characters = [] }) => {
   } = anime;
 
   const { visible, setVisible, bindings } = useModal();
-  const [collections, dispatch] = useCollection();
-  const { register, getValues, setValue, trigger, getFieldState, control } =
-    useForm();
-  const [isNewCollection, setIsNewCollection] = useState(false);
-  const { setToast } = useToasts();
-
-  const fullTitle = title.english || title.userPreferred;
+  const [collections] = useCollection();
   const inCollections = collections.filter(({ animes }) => animes.includes(id));
-
-  const onCloseModal = () => {
-    setVisible(false);
-    setIsNewCollection(false);
-  };
-
-  const onSubmitModal = async () => {
-    if (isNewCollection === true) {
-      await trigger("collectionName");
-      const { error } = getFieldState("collectionName");
-
-      if (error) {
-        setToast({ type: "error", text: error.message });
-        return;
-      }
-
-      const name = getValues("collectionName").trim();
-      dispatch(createCollectionWithAnime({ name, anime }));
-      setToast({ type: "success", text: "Added Successfully" });
-      setValue("collectionName", "");
-      onCloseModal(false);
-    } else {
-      const id = getValues("collectionId");
-      if (id == null) return;
-      dispatch(addToCollection({ id, anime }));
-      setToast({ type: "success", text: "Added Successfully" });
-      setValue("collectionId", null);
-      onCloseModal(false);
-    }
-  };
 
   return (
     <>
@@ -192,7 +145,7 @@ const AnimeDetail = ({ anime, characters = [] }) => {
             </CoverContainer>
           </CoverPlaceholder>
 
-          <Title>{fullTitle}</Title>
+          <Title>{title.english || title.userPreferred}</Title>
 
           <Metrics>
             <Metric>
@@ -243,62 +196,12 @@ const AnimeDetail = ({ anime, characters = [] }) => {
         </Aside>
       </ResponsiveContainer>
 
-      <Modal visible={visible} {...bindings} onClose={onCloseModal}>
-        <Modal.Title>Add to My Collection</Modal.Title>
-
-        <Modal.Content>
-          <Text>Add {fullTitle} to</Text>
-
-          {isNewCollection ? (
-            <>
-              <Input
-                placeholder="Enter new collection name"
-                width="100%"
-                marginBottom="1rem"
-                autoFocus
-                {...register(
-                  "collectionName",
-                  collectionNameValidation(collections)
-                )}
-              />
-
-              <Button width="100%" onClick={() => setIsNewCollection(false)}>
-                Pick a collection
-              </Button>
-            </>
-          ) : (
-            <>
-              <Controller
-                name="collectionId"
-                control={control}
-                render={({ field }) => (
-                  <Select
-                    placeholder="Choose collection"
-                    width="100%"
-                    marginBottom="1rem"
-                    {...field}
-                  >
-                    {collections.map((coll) => (
-                      <Select.Option key={coll.id} value={coll.id}>
-                        {coll.name}
-                      </Select.Option>
-                    ))}
-                  </Select>
-                )}
-              />
-
-              <Button width="100%" onClick={() => setIsNewCollection(true)}>
-                + New Collection
-              </Button>
-            </>
-          )}
-        </Modal.Content>
-
-        <Modal.Action passive onClick={onCloseModal}>
-          Cancel
-        </Modal.Action>
-        <Modal.Action onClick={onSubmitModal}>Add</Modal.Action>
-      </Modal>
+      <AddToCollection
+        visible={visible}
+        bindings={bindings}
+        anime={anime}
+        onClose={() => setVisible(false)}
+      />
     </>
   );
 };

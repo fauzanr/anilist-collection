@@ -19,7 +19,12 @@ export const createCollection = ({ name }) => ({
 
 export const createCollectionWithAnime = ({ name, anime }) => ({
   type: "CREATE",
-  payload: { name, animeId: anime.id, bannerUrl: anime.bannerImage },
+  payload: { name, animes: [anime.id], bannerUrl: anime.bannerImage },
+});
+
+export const createCollectionWithAnimes = ({ name, ids }) => ({
+  type: "CREATE",
+  payload: { name, animes: ids, bannerUrl: defaultBannerUrl },
 });
 
 export const editCollection = ({ id, name }) => ({
@@ -34,7 +39,12 @@ export const removeCollection = (id) => ({
 
 export const addToCollection = ({ id, anime }) => ({
   type: "ADD_ANIME",
-  payload: { id, animeId: anime.id, bannerUrl: anime.bannerImage },
+  payload: { id, animes: [anime.id], bannerUrl: anime.bannerImage },
+});
+
+export const addManyToCollection = ({ id, ids }) => ({
+  type: "ADD_ANIME",
+  payload: { id, animes: ids, bannerUrl: defaultBannerUrl },
 });
 
 export const removeFromCollection = ({ id, animeId }) => ({
@@ -53,7 +63,7 @@ const collectionReducer = (state, action) => {
         id: generateId(),
         name: payload.name,
         bannerUrl: payload.bannerUrl || defaultBannerUrl,
-        animes: payload.animeId ? [payload.animeId] : [],
+        animes: payload.animes ? payload.animes : [],
       };
 
       newState = [...state, newCollection];
@@ -77,11 +87,11 @@ const collectionReducer = (state, action) => {
 
       if (collection1) {
         if (collection1.animes.length === 0) {
-          collection1.animes = [payload.animeId];
+          collection1.animes = payload.animes;
           collection1.bannerUrl = payload.bannerUrl || defaultBannerUrl;
         } else {
           const animeSet = new Set(collection1.animes);
-          animeSet.add(payload.animeId);
+          payload.animes.forEach((id) => animeSet.add(id));
           collection1.animes = [...animeSet];
         }
       }
