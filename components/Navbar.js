@@ -4,11 +4,25 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 
 const NavbarContainer = styled.div`
-  height: ${({ theme }) => theme.navbarHeight};
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: space-between;
+  background: white;
   box-shadow: 0px 2px 8px 0px #00000040;
+
+  position: fixed;
+  width: 100%;
+  z-index: 100;
+
+  @media (min-width: ${({ theme }) => theme.breakpoints.xs}) {
+    flex-direction: row;
+    height: ${({ theme }) => theme.navbarHeight};
+  }
+`;
+
+const Margin = styled.div`
+  padding-bottom: ${({ theme }) => theme.navbarHeight};
 `;
 
 const NavbarLogo = styled.h1`
@@ -27,7 +41,10 @@ const NavbarNav = styled.ul`
 `;
 
 const NavbarItem = styled.li`
-  height: ${({ theme }) => theme.navbarHeight};
+  height: 36px;
+  @media (min-width: ${({ theme }) => theme.breakpoints.xs}) {
+    height: ${({ theme }) => theme.navbarHeight};
+  }
 `;
 
 const NavbarLink = styled.a`
@@ -48,23 +65,26 @@ const Navbar = () => {
   const { pathname } = useRouter();
 
   return (
-    <NavbarContainer>
-      <NavbarLogo>AniList</NavbarLogo>
-      <NavbarNav>
-        <NavbarItem>
-          <Link href="/anime?page=1" passHref>
-            <NavbarLink active={pathname === "/anime"}>Explore</NavbarLink>
-          </Link>
-        </NavbarItem>
-        <NavbarItem>
-          <Link href="/collection" passHref>
-            <NavbarLink active={pathname === "/collection"}>
-              My Collection
-            </NavbarLink>
-          </Link>
-        </NavbarItem>
-      </NavbarNav>
-    </NavbarContainer>
+    <>
+      <NavbarContainer>
+        <NavbarLogo>AniList</NavbarLogo>
+        <NavbarNav>
+          <NavbarItem>
+            <Link href="/anime?page=1" passHref>
+              <NavbarLink active={pathname === "/anime"}>Explore</NavbarLink>
+            </Link>
+          </NavbarItem>
+          <NavbarItem>
+            <Link href="/collection" passHref>
+              <NavbarLink active={pathname === "/collection"}>
+                My Collection
+              </NavbarLink>
+            </Link>
+          </NavbarItem>
+        </NavbarNav>
+      </NavbarContainer>
+      <Margin />
+    </>
   );
 };
 

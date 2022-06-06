@@ -66,7 +66,7 @@ const AddToCollection = ({
       onCloseModal();
     }
 
-    onSubmitted();
+    onSubmitted?.();
   };
 
   return (

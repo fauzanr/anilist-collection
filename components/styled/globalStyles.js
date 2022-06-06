@@ -42,6 +42,12 @@ export default (
       * {
         box-sizing: border-box;
       }
+
+      @media only screen and (max-width: 576px) {
+        body {
+          font-size: 0.8em;
+        }
+      }
     `}
   />
 );

@@ -22,7 +22,7 @@ const Layer = styled.div`
   bottom: 0;
 
   background: ${({ selected }) =>
-    selected ? "rgba(93, 145, 217, 0.5)" : "rgba(0, 0, 0, 0.1)"};
+    selected ? "rgba(93, 145, 217, 0.6)" : "rgba(0, 0, 0, 0.1)"};
   border-radius: 8px;
   cursor: pointer;
   &:hover {

@@ -51,7 +51,10 @@ const CollectionActions = styled.div`
   left: auto;
 
   transition: all 0.1s linear;
-  opacity: ${({ show }) => (show ? 1 : 0)};
+
+  @media (min-width: ${({ theme }) => theme.breakpoints.xs}) {
+    opacity: ${({ show }) => (show ? 1 : 0)};
+  }
 `;
 
 const Collection = () => {

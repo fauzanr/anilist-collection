@@ -20,10 +20,13 @@ export const Banner = styled.div`
 
 export const Grid = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
   gap: 1rem;
   margin: auto;
-  max-width: 1500px;
+
+  @media (min-width: ${({ theme }) => theme.breakpoints.xs}) {
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  }
 `;
 
 export const Container = styled.div`
